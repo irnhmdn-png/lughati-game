@@ -1,8 +1,8 @@
 const SUPABASE_URL = "https://zosmmbiknzbbrhohtleb.supabase.co";
-const SUPABASE_KEY = "sb_publishable_fuDxW0QqDrxRT4cKY0b92A_xHeKs8uj";
+const SUPABASE_KEY = "sb_publishable_U-kKIVLW5NZyv6zuWOc3jQ_ruPkoT9g";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-let sessionId = null, myName = "", realtimeChannel = null, selectedMode = "classic";
+let sessionId = null, myName = "", myClass = "", realtimeChannel = null, selectedMode = "classic";
 let quizData = [], currentQ = 0, myScore = 0, timerInterval = null;
 
 function show(id) {
@@ -21,28 +21,27 @@ function showStudent() { show("student"); }
 // GURU BUAT SESI
 async function createSession() {
     const tName = document.getElementById("teacherName").value.trim();
-    const title = document.getElementById("sessionTitle").value.trim();
+    const sClass = document.getElementById("sessionClass").value;
     selectedMode = document.getElementById("gameMode").value;
     
-    if (!tName || !title) return alert("Nama guru dan materi harus diisi!");
+    if (!tName) return alert("Nama guru harus diisi!");
 
     try {
         const { data, error } = await sb.from('sessions').insert({ 
-            code: code(), title, mode: selectedMode, status: 'waiting' 
+            code: code(), title: sClass, mode: selectedMode, status: 'waiting' 
         }).select();
 
         if (error) throw error;
         
         sessionId = data[0].id;
         document.getElementById("code").textContent = data[0].code;
-        document.getElementById("roomTitle").textContent = title;
+        document.getElementById("roomClass").textContent = sClass;
         document.getElementById("roomTeacher").textContent = tName;
         document.getElementById("roomModeName").textContent = document.getElementById("gameMode").options[document.getElementById("gameMode").selectedIndex].text;
         show("room");
 
         loadLobbyStudents();
 
-        // Realtime Lobi Siswa Masuk
         realtimeChannel = sb.channel('lobby_channel')
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'students', filter: `session_id=eq.${sessionId}` }, () => {
                 loadLobbyStudents();
@@ -60,13 +59,15 @@ async function loadLobbyStudents() {
     document.getElementById("studentCount").textContent = data.length;
     document.getElementById("studentList").innerHTML = data.map(s => `
         <div class="flex justify-between items-center bg-slate-50 px-4 py-3 rounded-xl border border-slate-100">
-            <span class="font-bold text-slate-700">👤 ${s.name}</span>
+            <div>
+                <span class="font-bold text-slate-700">👤 ${s.name}</span>
+                <span class="text-xs bg-indigo-50 text-indigo-700 ml-2 px-2 py-0.5 rounded font-semibold">${s.class_name || '-'}</span>
+            </div>
             <button onclick="kickStudent('${s.id}')" class="text-xs font-bold bg-rose-100 text-rose-600 px-3 py-1.5 rounded-lg hover:bg-rose-200">Keluarkan (✕)</button>
         </div>
     `).join("") || '<p class="text-xs text-slate-400 text-center py-2">Belum ada siswa bergabung</p>';
 }
 
-// FITUR KICK SISWA
 async function kickStudent(studentId) {
     if(!confirm("Keluarkan siswa ini dari sesi?")) return;
     await sb.from('students').delete().eq('id', studentId);
@@ -82,7 +83,6 @@ async function startSession() {
     }
 }
 
-// AKHIRI SESI & LIHAT REKAP NILAI
 async function endSession() {
     try {
         await sb.from('sessions').update({ status: 'finished' }).eq('id', sessionId);
@@ -96,44 +96,55 @@ async function endSession() {
 async function loadLeaderboard() {
     const { data } = await sb.from('scores').select('*').eq('session_id', sessionId).order('score', { ascending: false });
     document.getElementById("leaderboardList").innerHTML = (data && data.length > 0) ? data.map((item, index) => `
-        <div class="flex justify-between items-center bg-slate-50 px-4 py-3 rounded-xl border border-slate-100">
-            <span class="font-bold text-slate-700">#${index + 1} ${item.student_name}</span>
-            <span class="font-extrabold text-indigo-900 bg-indigo-50 px-3 py-1 rounded-lg">${item.score} Poin</span>
+        <div class="flex justify-between items-center bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 text-sm">
+            <span class="font-bold text-slate-700">#${index + 1} ${item.student_name} <span class="text-xs text-slate-400 font-normal">(${item.class_name || '-'})</span></span>
+            <div>
+                <span class="text-xs bg-pink-50 text-pink-700 px-2 py-1 rounded font-semibold mr-1">${item.game_mode || 'classic'}</span>
+                <span class="font-extrabold text-indigo-900 bg-indigo-50 px-2.5 py-1 rounded-lg">${item.score} Poin</span>
+            </div>
         </div>
     `).join("") : '<p class="text-center text-slate-400">Belum ada rekap nilai.</p>';
 }
 
-// UNDUH PDF REKAP NILAI
+// UNDUH PDF (No - Nama - Kelas - Mode Game - Nilai)
 async function downloadPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(18);
+    doc.setFontSize(16);
     doc.text("LUGHATI Classroom - Rekap Nilai Siswa", 14, 20);
     
-    doc.setFontSize(11);
+    doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
-    doc.text(`Sesi ID: ${sessionId}`, 14, 28);
-    doc.text(`Dicetak oleh sistem SMP QLP Rabbani`, 14, 34);
+    doc.text(`Lembaga: SMP QLP Rabbani`, 14, 26);
+    doc.text(`Sesi ID: ${sessionId}`, 14, 32);
 
     const { data } = await sb.from('scores').select('*').eq('session_id', sessionId).order('score', { ascending: false });
-    let y = 45;
+    let y = 42;
+    
+    // Header Tabel
     doc.setFont("helvetica", "bold");
     doc.text("No", 14, y);
-    doc.text("Nama Siswa", 30, y);
-    doc.text("Skor", 150, y);
+    doc.text("Nama Siswa", 28, y);
+    doc.text("Kelas", 90, y);
+    doc.text("Mode Game", 125, y);
+    doc.text("Nilai", 175, y);
     doc.line(14, y+2, 195, y+2);
 
     y += 8;
     doc.setFont("helvetica", "normal");
-    if(data) {
+    if(data && data.length > 0) {
         data.forEach((row, i) => {
             doc.text(`${i+1}`, 14, y);
-            doc.text(`${row.student_name}`, 30, y);
-            doc.text(`${row.score}`, 150, y);
+            doc.text(`${row.student_name}`, 28, y);
+            doc.text(`${row.class_name || '-'}`, 90, y);
+            doc.text(`${row.game_mode || 'classic'}`, 125, y);
+            doc.text(`${row.score}`, 175, y);
             y += 8;
         });
+    } else {
+        doc.text("Tidak ada data rekap nilai.", 14, y);
     }
     doc.save("Rekap-Nilai-Lughati.pdf");
 }
@@ -142,8 +153,9 @@ async function downloadPDF() {
 async function joinSession() {
     const c = document.getElementById("joinCode").value.toUpperCase().trim();
     myName = document.getElementById("studentName").value.trim();
+    myClass = document.getElementById("studentClass").value.trim();
     
-    if (!c || !myName) return alert("Kode dan nama lengkap harus diisi!");
+    if (!c || !myName || !myClass) return alert("Kode, nama lengkap, dan kelas harus diisi!");
 
     const { data: s } = await sb.from('sessions').select('*').eq('code', c).single();
     if (!s || s.status !== 'waiting') return alert("Sesi tidak ditemukan atau sudah dimulai!");
@@ -151,11 +163,10 @@ async function joinSession() {
     sessionId = s.id;
     selectedMode = s.mode || "classic";
     
-    await sb.from('students').insert({ session_id: sessionId, name: myName });
+    await sb.from('students').insert({ session_id: sessionId, name: myName, class_name: myClass });
     document.getElementById("waitName").textContent = myName;
     show("waiting");
 
-    // Realtime tunggu game dimulai atau dikick
     realtimeChannel = sb.channel('student_wait')
         .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'sessions', filter: `id=eq.${sessionId}` }, payload => {
             if (payload.new.status === 'playing') loadGame();
@@ -167,7 +178,6 @@ async function joinSession() {
         }).subscribe();
 }
 
-// 3 MODE GAME & 1 MODE BATTLE
 async function loadGame() {
     const { data } = await sb.from('kosakata').select('*');
     if (!data || data.length === 0) return alert("Bank soal kosong di database!");
@@ -203,7 +213,6 @@ function renderQuestion() {
             <button onclick="checkTF(${isTrue}, false)" class="w-full py-4 rounded-2xl font-bold text-white bg-rose-600 hover:bg-rose-500 shadow-lg">✖ Salah</button>
         `;
     } else {
-        // Classic, Speed & Battle Mode (Multiple Choice)
         let opsiDummy = ["Meja", "Kursi", "Pintu", "Jendela", "Buku", "Pena", "Tas", "Papan Tulis"].filter(x => x !== q.arti);
         let opsis = [q.arti, ...opsiDummy.sort(() => 0.5 - Math.random()).slice(0, 3)].sort(() => 0.5 - Math.random());
         
@@ -243,7 +252,13 @@ async function finishGame() {
     clearInterval(timerInterval);
     show("resultScreen");
     document.getElementById("finalScore").textContent = myScore;
-    await sb.from('scores').insert({ session_id: sessionId, student_name: myName, score: myScore });
+    await sb.from('scores').insert({ 
+        session_id: sessionId, 
+        student_name: myName, 
+        class_name: myClass, 
+        game_mode: selectedMode, 
+        score: myScore 
+    });
 }
 
 function leaveWaiting() { window.location.reload(); }
