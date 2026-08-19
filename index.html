@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LUGHATI Classroom V4.2 - Live</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:12px;font-family:system-ui,-apple-system,sans-serif;background:linear-gradient(145deg,#06162f,#104377 55%,#2a1454);color:#fff;min-height:100vh}.app{max-width:620px;margin:auto}.screen{background:rgba(5,18,43,.96);border:1px solid #3b5a80;border-radius:26px;padding:18px;box-shadow:0 20px 60px #0008}.hidden{display:none!important}
+.brand{text-align:center}.brand .ar{font-size:52px;font-weight:900;color:#ffd34d}.brand h1{margin:0;color:#ffd34d;font-size:32px}.brand p{color:#c6d8ef;margin:4px 0 22px}
+h2{text-align:center;margin:7px 0 17px}.field{margin:10px 0}.field label{display:block;font-weight:800;margin-bottom:6px}.field input,.field select{width:100%;padding:13px;border:2px solid #385b83;border-radius:12px;font-size:15px;background:#f8fbff;color:#172238}
+button{width:100%;padding:14px;border:0;border-radius:14px;margin-top:9px;font-weight:900;font-size:15px;color:#fff;cursor:pointer;background:linear-gradient(#43cc60,#158837);box-shadow:0 4px #0c5c25}button:active{transform:translateY(2px);box-shadow:0 2px #0c5c25}button.secondary{background:linear-gradient(#7866e6,#4c3ca1);box-shadow:0 4px #30286c}button.blue{background:linear-gradient(#3c91e7,#1e5fae);box-shadow:0 4px #123f77}
+.card{background:#fff;color:#182238;border-radius:20px;padding:17px}.code{font-size:42px;font-weight:1000;letter-spacing:4px;text-align:center;color:#ffd34d;background:#112b4d;border:2px dashed #58789f;border-radius:16px;padding:15px;margin:12px 0}.center{text-align:center}.muted{color:#a9bdd8}.ok{background:#dff8e7;color:#145c2a;padding:10px;border-radius:10px;font-weight:800}.err{background:#ffe0e2;color:#8b2027;padding:10px;border-radius:10px;font-weight:800}.student{display:flex;justify-content:space-between;align-items:center;gap:8px;background:#112d51;border:1px solid #365a80;border-radius:11px;padding:10px;margin:6px 0}.student span{font-weight:800}.footer{text-align:center;color:#94aac7;font-size:12px;margin-top:12px}
+.soal-ar{font-size:64px;font-weight:900;text-align:center;color:#ffd34d;margin:20px 0;text-shadow:2px 2px 4px #000}
+.ans-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<section id="home" class="screen">
+  <div class="brand"><div class="ar">لُغَتِي</div><h1>LUGHATI</h1><p>Classroom • V4.2 LIVE</p></div>
+  <button onclick="showTeacher()">👩‍🏫 BUAT SESI GURU</button>
+  <button class="secondary" onclick="showStudent()">👨‍🎓 GABUNG SEBAGAI SISWA</button>
+</section>
+
+<section id="teacher" class="screen hidden">
+  <h2>👩‍🏫 Buat Sesi Kelas</h2>
+  <div class="field"><label>Nama guru</label><input id="teacherName" placeholder="Contoh: Ustadz Ahmad"></div>
+  <div class="field"><label>Nama sesi</label><input id="sessionTitle" value="Mufradat Dasar"></div>
+  <button onclick="createSession()">🚀 BUAT SESI</button>
+  <button class="secondary" onclick="show('home')">🏠 Kembali</button>
+  <div id="teacherMsg"></div>
+</section>
+
+<section id="room" class="screen hidden">
+  <h2>🎮 Sesi Kelas Aktif</h2>
+  <div id="code" class="code">------</div>
+  <div class="card">
+    <div><b>Materi:</b> <span id="roomTitle"></span></div>
+    <div style="margin-top:7px"><b>Guru:</b> <span id="roomTeacher"></span></div>
+  </div>
+  <h3>👥 Siswa bergabung: <span id="studentCount">0</span></h3>
+  <div id="studentList"></div>
+  <div class="ok" style="margin-top:10px">🟢 Realtime aktif. Menunggu siswa...</div>
+  <button onclick="startSession()">▶ MULAI PERMAINAN</button>
+</section>
+
+<section id="student" class="screen hidden">
+  <h2>👨‍🎓 Gabung Permainan</h2>
+  <div class="field"><label>Kode sesi</label><input id="joinCode" maxlength="8" style="text-transform:uppercase"></div>
+  <div class="field"><label>Nama lengkap</label><input id="studentName"></div>
+  <button onclick="joinSession()">🚀 GABUNG</button>
+  <button class="secondary" onclick="show('home')">🏠 Kembali</button>
+  <div id="studentMsg"></div>
+</section>
+
+<section id="waiting" class="screen hidden">
+  <div class="brand"><div class="ar">أَهْلًا وَسَهْلًا</div><h2>Menunggu permainan...</h2></div>
+  <div class="card center"><p>Halo, <b id="waitName"></b> 👋 Guru belum memulai game.</p></div>
+</section>
+
+<section id="gameScreen" class="screen hidden">
+  <div style="display:flex; justify-content:space-between; font-weight:bold;">
+    <span>Soal: <span id="qCount">1/10</span></span>
+    <span>Skor: <span id="score">0</span></span>
+  </div>
+  <div id="soalTeks" class="soal-ar">كِتَابٌ</div>
+  <div class="ans-grid" id="opsiJawaban"></div>
+</section>
+
+<section id="resultScreen" class="screen hidden">
+  <div class="brand"><div class="ar">مُمْتَاز!</div><h2>Selesai!</h2></div>
+  <div class="card center">
+    <h3>Skor Akhir Anda:</h3>
+    <div class="code" id="finalScore">100</div>
+    <p>Nilai telah dikirim ke guru.</p>
+  </div>
+  <button onclick="window.location.reload()">Selesai</button>
+</section>
+
+</div>
+
+<!-- 1. Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- 2. Game Logic -->
+<script src="game.js"></script>
+</body>
+</html>
