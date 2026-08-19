@@ -1,5 +1,5 @@
 const SUPABASE_URL = "https://zosmmbiknzbbrhohtleb.supabase.co";
-const SUPABASE_KEY = "sb_publishable_U-kKIVLW5NZyv6zuWOc3jQ_ruPkoT9g";
+const SUPABASE_KEY = "sb_publishable_fuDxW0QqDrxRT4cKY0b92A_xHeKs8uj";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let sessionId = null, myName = "", myClass = "", realtimeChannel = null, selectedMode = "classic";
