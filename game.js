@@ -1,5 +1,5 @@
 const SUPABASE_URL = "https://zosmmbiknzbbrhohtleb.supabase.co";
-const SUPABASE_KEY = "sb_publishable_fuDxW0QqDrxRT4cKY0b92A_xHeKs8uj";
+const SUPABASE_KEY = "sb_publishable_U-kKIVLW5NZyv6zuWOc3jQ_ruPkoT9g";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let sessionId = null, myName = "", myClass = "", realtimeChannel = null, selectedMode = "classic";
@@ -49,7 +49,7 @@ async function createSession() {
             
     } catch (err) {
         console.error("Error Create Session:", err);
-        alert("Gagal membuat sesi!");
+        alert("Gagal membuat sesi! Pastikan database Supabase sudah siap.");
     }
 }
 
@@ -123,7 +123,6 @@ async function downloadPDF() {
     const { data } = await sb.from('scores').select('*').eq('session_id', sessionId).order('score', { ascending: false });
     let y = 42;
     
-    // Header Tabel
     doc.setFont("helvetica", "bold");
     doc.text("No", 14, y);
     doc.text("Nama Siswa", 28, y);
