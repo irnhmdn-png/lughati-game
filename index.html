@@ -3,10 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>LUGHATI Classroom V5.0 - Pro Edition</title>
-<!-- Tailwind CSS untuk Desain Elegan -->
+<title>LUGHATI Classroom V5.1 - Pro Edition</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<!-- jsPDF untuk Unduh PDF Rekap Nilai -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
@@ -17,8 +15,6 @@
 <body class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900">
 
 <div class="w-full max-w-xl bg-white/95 backdrop-blur shadow-2xl rounded-3xl p-6 md:p-8 border border-pink-100 relative overflow-hidden">
-  
-  <!-- WATERMARK -->
   <div class="watermark">SMP QLP Rabbani</div>
 
   <!-- HOME SCREEN -->
@@ -42,8 +38,12 @@
       <input id="teacherName" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-pink-500 outline-none" placeholder="Ustadz Ahmad">
     </div>
     <div>
-      <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Nama / Materi Sesi</label>
-      <input id="sessionTitle" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-pink-500 outline-none" value="Mufradat Dasar">
+      <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Pilih Kelas</label>
+      <select id="sessionClass" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-pink-500 outline-none font-semibold text-slate-700">
+        <option value="Kelas 7">Kelas 7</option>
+        <option value="Kelas 8">Kelas 8</option>
+        <option value="Kelas 9">Kelas 9</option>
+      </select>
     </div>
     <div>
       <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Pilih Mode Permainan</label>
@@ -51,7 +51,7 @@
         <option value="classic">Pilihan Ganda Klasik (10 Soal)</option>
         <option value="speed">Tantangan Kecepatan Waktu</option>
         <option value="truefalse">Mode Benar / Salah</option>
-        <option value="battle">Mode Battle Tim / Duel Cepat</option>
+        <option value="battle">Mode Battle (Duel Cepat 20 Poin)</option>
       </select>
     </div>
     <button onclick="createSession()" class="w-full py-4 rounded-2xl font-bold text-white bg-pink-600 hover:bg-pink-500 shadow-lg shadow-pink-600/30 transition-all">🚀 LUNCURKAN SESI</button>
@@ -65,7 +65,7 @@
       <div id="code" class="text-4xl font-black text-indigo-900 tracking-widest bg-pink-50 py-3 rounded-2xl my-2 border border-pink-200">------</div>
     </div>
     <div class="bg-slate-50 p-4 rounded-2xl space-y-1 text-sm border border-slate-100">
-      <div><b>Materi:</b> <span id="roomTitle"></span></div>
+      <div><b>Kelas:</b> <span id="roomClass"></span></div>
       <div><b>Mode:</b> <span id="roomModeName"></span></div>
       <div><b>Guru:</b> <span id="roomTeacher"></span></div>
     </div>
@@ -90,6 +90,10 @@
     <div>
       <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Nama Lengkap</label>
       <input id="studentName" class="w-full px-4 py-3 rounded-xl border border-slate-200" placeholder="Ahmad Zaki">
+    </div>
+    <div>
+      <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Kelas Anda</label>
+      <input id="studentClass" class="w-full px-4 py-3 rounded-xl border border-slate-200" placeholder="Contoh: 7A / 8B / 9C">
     </div>
     <button onclick="joinSession()" class="w-full py-4 rounded-2xl font-bold text-white bg-indigo-900 hover:bg-indigo-800 shadow-lg shadow-indigo-900/30">🚀 MASUK LOBI</button>
     <button onclick="show('home')" class="w-full py-3 rounded-2xl font-bold text-slate-500 hover:bg-slate-100">Kembali</button>
@@ -144,7 +148,6 @@
 
 </div>
 
-<!-- Supabase SDK & Main Game Logic -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="game.js"></script>
 </body>
