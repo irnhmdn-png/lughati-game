@@ -3,86 +3,149 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>LUGHATI Classroom V4.2 - Live</title>
+<title>LUGHATI Classroom V5.0 - Pro Edition</title>
+<!-- Tailwind CSS untuk Desain Elegan -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- jsPDF untuk Unduh PDF Rekap Nilai -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-*{box-sizing:border-box}body{margin:0;padding:12px;font-family:system-ui,-apple-system,sans-serif;background:linear-gradient(145deg,#06162f,#104377 55%,#2a1454);color:#fff;min-height:100vh}.app{max-width:620px;margin:auto}.screen{background:rgba(5,18,43,.96);border:1px solid #3b5a80;border-radius:26px;padding:18px;box-shadow:0 20px 60px #0008}.hidden{display:none!important}
-.brand{text-align:center}.brand .ar{font-size:52px;font-weight:900;color:#ffd34d}.brand h1{margin:0;color:#ffd34d;font-size:32px}.brand p{color:#c6d8ef;margin:4px 0 22px}
-h2{text-align:center;margin:7px 0 17px}.field{margin:10px 0}.field label{display:block;font-weight:800;margin-bottom:6px}.field input,.field select{width:100%;padding:13px;border:2px solid #385b83;border-radius:12px;font-size:15px;background:#f8fbff;color:#172238}
-button{width:100%;padding:14px;border:0;border-radius:14px;margin-top:9px;font-weight:900;font-size:15px;color:#fff;cursor:pointer;background:linear-gradient(#43cc60,#158837);box-shadow:0 4px #0c5c25}button:active{transform:translateY(2px);box-shadow:0 2px #0c5c25}button.secondary{background:linear-gradient(#7866e6,#4c3ca1);box-shadow:0 4px #30286c}button.blue{background:linear-gradient(#3c91e7,#1e5fae);box-shadow:0 4px #123f77}
-.card{background:#fff;color:#182238;border-radius:20px;padding:17px}.code{font-size:42px;font-weight:1000;letter-spacing:4px;text-align:center;color:#ffd34d;background:#112b4d;border:2px dashed #58789f;border-radius:16px;padding:15px;margin:12px 0}.center{text-align:center}.muted{color:#a9bdd8}.ok{background:#dff8e7;color:#145c2a;padding:10px;border-radius:10px;font-weight:800}.err{background:#ffe0e2;color:#8b2027;padding:10px;border-radius:10px;font-weight:800}.student{display:flex;justify-content:space-between;align-items:center;gap:8px;background:#112d51;border:1px solid #365a80;border-radius:11px;padding:10px;margin:6px 0}.student span{font-weight:800}.footer{text-align:center;color:#94aac7;font-size:12px;margin-top:12px}
-.soal-ar{font-size:64px;font-weight:900;text-align:center;color:#ffd34d;margin:20px 0;text-shadow:2px 2px 4px #000}
-.ans-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0f172a; color: #1e293b; }
+  .watermark { position: fixed; bottom: 10px; right: 15px; font-size: 11px; font-weight: 700; color: rgba(255, 255, 255, 0.3); pointer-events: none; z-index: 9999; }
 </style>
 </head>
-<body>
-<div class="app">
+<body class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900">
 
-<section id="home" class="screen">
-  <div class="brand"><div class="ar">لُغَتِي</div><h1>LUGHATI</h1><p>Classroom • V4.2 LIVE</p></div>
-  <button onclick="showTeacher()">👩‍🏫 BUAT SESI GURU</button>
-  <button class="secondary" onclick="showStudent()">👨‍🎓 GABUNG SEBAGAI SISWA</button>
-</section>
+<div class="w-full max-w-xl bg-white/95 backdrop-blur shadow-2xl rounded-3xl p-6 md:p-8 border border-pink-100 relative overflow-hidden">
+  
+  <!-- WATERMARK -->
+  <div class="watermark">SMP QLP Rabbani</div>
 
-<section id="teacher" class="screen hidden">
-  <h2>👩‍🏫 Buat Sesi Kelas</h2>
-  <div class="field"><label>Nama guru</label><input id="teacherName" placeholder="Contoh: Ustadz Ahmad"></div>
-  <div class="field"><label>Nama sesi</label><input id="sessionTitle" value="Mufradat Dasar"></div>
-  <button onclick="createSession()">🚀 BUAT SESI</button>
-  <button class="secondary" onclick="show('home')">🏠 Kembali</button>
-  <div id="teacherMsg"></div>
-</section>
+  <!-- HOME SCREEN -->
+  <section id="home" class="screen space-y-6 text-center">
+    <div class="space-y-2">
+      <span class="text-5xl font-black text-pink-600">لُغَتِي</span>
+      <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">LUGHATI Classroom</h1>
+      <p class="text-sm font-medium text-slate-500">Platform Pembelajaran Bahasa Arab Interaktif</p>
+    </div>
+    <div class="space-y-3 pt-4">
+      <button onclick="showTeacher()" class="w-full py-4 px-6 rounded-2xl font-bold text-white bg-indigo-900 hover:bg-indigo-800 shadow-lg shadow-indigo-900/30 transition-all active:scale-[0.98]">👩‍🏫 BUAT SESI GURU</button>
+      <button onclick="showStudent()" class="w-full py-4 px-6 rounded-2xl font-bold text-slate-700 bg-pink-100 hover:bg-pink-200 transition-all active:scale-[0.98]">👨‍🎓 GABUNG SEBAGAI SISWA</button>
+    </div>
+  </section>
 
-<section id="room" class="screen hidden">
-  <h2>🎮 Sesi Kelas Aktif</h2>
-  <div id="code" class="code">------</div>
-  <div class="card">
-    <div><b>Materi:</b> <span id="roomTitle"></span></div>
-    <div style="margin-top:7px"><b>Guru:</b> <span id="roomTeacher"></span></div>
-  </div>
-  <h3>👥 Siswa bergabung: <span id="studentCount">0</span></h3>
-  <div id="studentList"></div>
-  <div class="ok" style="margin-top:10px">🟢 Realtime aktif. Menunggu siswa...</div>
-  <button onclick="startSession()">▶ MULAI PERMAINAN</button>
-</section>
+  <!-- TEACHER SCREEN -->
+  <section id="teacher" class="screen hidden space-y-4">
+    <h2 class="text-2xl font-extrabold text-slate-900 text-center">Buat Sesi Kelas</h2>
+    <div>
+      <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Nama Guru</label>
+      <input id="teacherName" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-pink-500 outline-none" placeholder="Ustadz Ahmad">
+    </div>
+    <div>
+      <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Nama / Materi Sesi</label>
+      <input id="sessionTitle" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-pink-500 outline-none" value="Mufradat Dasar">
+    </div>
+    <div>
+      <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Pilih Mode Permainan</label>
+      <select id="gameMode" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-pink-500 outline-none font-semibold text-slate-700">
+        <option value="classic">Pilihan Ganda Klasik (10 Soal)</option>
+        <option value="speed">Tantangan Kecepatan Waktu</option>
+        <option value="truefalse">Mode Benar / Salah</option>
+        <option value="battle">Mode Battle Tim / Duel Cepat</option>
+      </select>
+    </div>
+    <button onclick="createSession()" class="w-full py-4 rounded-2xl font-bold text-white bg-pink-600 hover:bg-pink-500 shadow-lg shadow-pink-600/30 transition-all">🚀 LUNCURKAN SESI</button>
+    <button onclick="show('home')" class="w-full py-3 rounded-2xl font-bold text-slate-500 hover:bg-slate-100">Kembali</button>
+  </section>
 
-<section id="student" class="screen hidden">
-  <h2>👨‍🎓 Gabung Permainan</h2>
-  <div class="field"><label>Kode sesi</label><input id="joinCode" maxlength="8" style="text-transform:uppercase"></div>
-  <div class="field"><label>Nama lengkap</label><input id="studentName"></div>
-  <button onclick="joinSession()">🚀 GABUNG</button>
-  <button class="secondary" onclick="show('home')">🏠 Kembali</button>
-  <div id="studentMsg"></div>
-</section>
+  <!-- ROOM ACTIVE (GURU) -->
+  <section id="room" class="screen hidden space-y-4">
+    <div class="text-center">
+      <span class="text-xs font-bold uppercase text-pink-600 tracking-wider">Kode Akses Sesi</span>
+      <div id="code" class="text-4xl font-black text-indigo-900 tracking-widest bg-pink-50 py-3 rounded-2xl my-2 border border-pink-200">------</div>
+    </div>
+    <div class="bg-slate-50 p-4 rounded-2xl space-y-1 text-sm border border-slate-100">
+      <div><b>Materi:</b> <span id="roomTitle"></span></div>
+      <div><b>Mode:</b> <span id="roomModeName"></span></div>
+      <div><b>Guru:</b> <span id="roomTeacher"></span></div>
+    </div>
+    <div class="flex justify-between items-center">
+      <h3 class="font-bold text-slate-800">Siswa Bergabung (<span id="studentCount">0</span>)</h3>
+      <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full font-bold">🟢 Realtime</span>
+    </div>
+    <div id="studentList" class="max-h-40 overflow-y-auto space-y-2 pr-1"></div>
+    <div class="space-y-2 pt-2">
+      <button onclick="startSession()" class="w-full py-4 rounded-2xl font-bold text-white bg-emerald-600 hover:bg-emerald-500 shadow-lg shadow-emerald-600/30">▶ MULAI PERMAINAN</button>
+      <button onclick="endSession()" class="w-full py-3 rounded-2xl font-bold text-rose-600 bg-rose-50 hover:bg-rose-100">⏹ AKHIRI SESI & REKAP NILAI</button>
+    </div>
+  </section>
 
-<section id="waiting" class="screen hidden">
-  <div class="brand"><div class="ar">أَهْلًا وَسَهْلًا</div><h2>Menunggu permainan...</h2></div>
-  <div class="card center"><p>Halo, <b id="waitName"></b> 👋 Guru belum memulai game.</p></div>
-</section>
+  <!-- STUDENT JOIN -->
+  <section id="student" class="screen hidden space-y-4">
+    <h2 class="text-2xl font-extrabold text-slate-900 text-center">Gabung Permainan</h2>
+    <div>
+      <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Kode Sesi</label>
+      <input id="joinCode" class="w-full px-4 py-3 rounded-xl border border-slate-200 uppercase tracking-widest font-bold text-center text-lg" placeholder="LGT-XXXX" maxlength="8">
+    </div>
+    <div>
+      <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Nama Lengkap</label>
+      <input id="studentName" class="w-full px-4 py-3 rounded-xl border border-slate-200" placeholder="Ahmad Zaki">
+    </div>
+    <button onclick="joinSession()" class="w-full py-4 rounded-2xl font-bold text-white bg-indigo-900 hover:bg-indigo-800 shadow-lg shadow-indigo-900/30">🚀 MASUK LOBI</button>
+    <button onclick="show('home')" class="w-full py-3 rounded-2xl font-bold text-slate-500 hover:bg-slate-100">Kembali</button>
+  </section>
 
-<section id="gameScreen" class="screen hidden">
-  <div style="display:flex; justify-content:space-between; font-weight:bold;">
-    <span>Soal: <span id="qCount">1/10</span></span>
-    <span>Skor: <span id="score">0</span></span>
-  </div>
-  <div id="soalTeks" class="soal-ar">كِتَابٌ</div>
-  <div class="ans-grid" id="opsiJawaban"></div>
-</section>
+  <!-- WAITING ROOM -->
+  <section id="waiting" class="screen hidden text-center space-y-6 py-8">
+    <div class="space-y-2">
+      <span class="text-4xl">⏳</span>
+      <h2 class="text-xl font-bold text-slate-800">Menunggu Guru Memulai...</h2>
+      <p class="text-sm text-slate-500">Halo <b id="waitName" class="text-indigo-900"></b>, tetap di halaman ini ya!</p>
+    </div>
+    <button onclick="leaveWaiting()" class="text-sm text-rose-500 font-bold hover:underline">Keluar Sesi</button>
+  </section>
 
-<section id="resultScreen" class="screen hidden">
-  <div class="brand"><div class="ar">مُمْتَاز!</div><h2>Selesai!</h2></div>
-  <div class="card center">
-    <h3>Skor Akhir Anda:</h3>
-    <div class="code" id="finalScore">100</div>
-    <p>Nilai telah dikirim ke guru.</p>
-  </div>
-  <button onclick="window.location.reload()">Selesai</button>
-</section>
+  <!-- GAME SCREEN -->
+  <section id="gameScreen" class="screen hidden space-y-6">
+    <div class="flex justify-between items-center text-xs font-bold uppercase text-slate-500">
+      <span>Soal: <span id="qCount" class="text-slate-900 font-extrabold text-sm">1/10</span></span>
+      <span id="timerBox" class="bg-pink-100 text-pink-700 px-3 py-1 rounded-full hidden">⏱ <span id="timeLeft">10</span>s</span>
+      <span>Skor: <span id="score" class="text-indigo-900 font-extrabold text-sm">0</span></span>
+    </div>
+    <div class="bg-indigo-50 border border-indigo-100 rounded-3xl p-8 text-center space-y-2">
+      <div id="soalTeks" class="text-5xl font-black text-indigo-950 tracking-wide">كِتَابٌ</div>
+    </div>
+    <div id="opsiJawaban" class="grid grid-cols-1 gap-3"></div>
+  </section>
+
+  <!-- RESULT SCREEN -->
+  <section id="resultScreen" class="screen hidden text-center space-y-6 py-4">
+    <div class="space-y-2">
+      <span class="text-5xl">🎉</span>
+      <h2 class="text-2xl font-black text-slate-900">Permainan Selesai!</h2>
+      <p class="text-sm text-slate-500">Kerja bagus, nilai telah dikirim ke guru.</p>
+    </div>
+    <div class="bg-slate-50 border border-slate-100 rounded-2xl p-6 space-y-1">
+      <span class="text-xs font-bold uppercase text-slate-400">Skor Akhir Anda</span>
+      <div id="finalScore" class="text-5xl font-black text-indigo-900">100</div>
+    </div>
+    <button onclick="window.location.reload()" class="w-full py-4 rounded-2xl font-bold text-white bg-indigo-900 hover:bg-indigo-800">Kembali ke Beranda</button>
+  </section>
+
+  <!-- TEACHER RECAP & LEADERBOARD DASHBOARD -->
+  <section id="recapScreen" class="screen hidden space-y-4">
+    <h2 class="text-2xl font-extrabold text-slate-900 text-center">Rekap Nilai Siswa</h2>
+    <div id="leaderboardList" class="max-h-60 overflow-y-auto space-y-2 pr-1"></div>
+    <div class="space-y-2 pt-2">
+      <button onclick="downloadPDF()" class="w-full py-3 rounded-2xl font-bold text-white bg-pink-600 hover:bg-pink-500 shadow-lg shadow-pink-600/30">📥 Unduh Rekap PDF</button>
+      <button onclick="window.location.reload()" class="w-full py-3 rounded-2xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200">Tutup & Beranda</button>
+    </div>
+  </section>
 
 </div>
 
-<!-- 1. Supabase SDK -->
+<!-- Supabase SDK & Main Game Logic -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<!-- 2. Game Logic -->
 <script src="game.js"></script>
 </body>
 </html>
